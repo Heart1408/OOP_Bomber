@@ -1,65 +1,65 @@
 package uet.oop.bomberman.entities;
 
-import uet.oop.bomberman.graphics.IRender;
-import uet.oop.bomberman.graphics.Screen;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.level.Coordinates;
 
-/**
- * Lớp đại diện cho tất cả thực thể trong game (Bomber, Enemy, Wall, Brick,...)
- */
-public abstract class Entity implements IRender {
+import java.awt.*;
 
-	protected double _x, _y;
-	protected boolean _removed = false;
-	protected Sprite _sprite;
+public abstract class Entity {
+    //Tọa độ X tính từ góc trái trên trong Canvas
+    protected int x;
 
-	/**
-	 * Phương thức này được gọi liên tục trong vòng lặp game,
-	 * mục đích để xử lý sự kiện và cập nhật trạng thái Entity
-	 */
-	@Override
-	public abstract void update();
+    //Tọa độ Y tính từ góc trái trên trong Canvas
+    protected int y;
 
-	/**
-	 * Phương thức này được gọi liên tục trong vòng lặp game,
-	 * mục đích để cập nhật hình ảnh của entity theo trạng thái
-	 */
-	@Override
-	public abstract void render(Screen screen);
-	
-	public void remove() {
-		_removed = true;
-	}
-	
-	public boolean isRemoved() {
-		return _removed;
-	}
-	
-	public Sprite getSprite() {
-		return _sprite;
-	}
+    protected Image img;
+    protected int animated = 0;
+    protected int layer;
+    protected boolean alive;
 
-	/**
-	 * Phương thức này được gọi để xử lý khi hai entity va chạm vào nhau
-	 * @param e
-	 * @return
-	 */
-	public abstract boolean collide(Entity e);
-	
-	public double getX() {
-		return _x;
-	}
-	
-	public double getY() {
-		return _y;
-	}
-	
-	public int getXTile() {
-		return Coordinates.pixelToTile(_x + _sprite.SIZE / 2);
-	}
-	
-	public int getYTile() {
-		return Coordinates.pixelToTile(_y - _sprite.SIZE / 2);
-	}
+    //Khởi tạo đối tượng, chuyển từ tọa độ đơn vị sang tọa độ trong canvas
+    public Entity( int xUnit, int yUnit, Image img) {
+        this.x = xUnit * Sprite.SCALED_SIZE;
+        this.y = yUnit * Sprite.SCALED_SIZE;
+        this.img = img;
+    }
+
+    public Entity(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
+    public void render(GraphicsContext gc) {
+        gc.drawImage(img, x, y);
+    }
+
+    public abstract void update();
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getLayer() {
+        return layer;
+    }
+
+    public void setLayer(int layer) {
+        this.layer = layer;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
 }
